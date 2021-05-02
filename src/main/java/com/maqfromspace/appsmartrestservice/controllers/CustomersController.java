@@ -27,15 +27,28 @@ public class CustomersController {
 
     //Return list of all customers
     @GetMapping
-    public List<Customer> getCustomers() {
-        return customersRepository.findAll();
+    public CollectionModel<EntityModel<Customer>> getCustomers() {
+        List<EntityModel<Customer>> customersModel = customersRepository.findAll()
+                .stream()
+                .map(customer -> EntityModel.of(customer,
+                        linkTo(methodOn(CustomersController.class).getCustomer(customer.getId())).withSelfRel(),
+                        linkTo(methodOn(CustomersController.class).getProducts(customer.getId())).withRel("products"),
+                        linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers"))).collect(Collectors.toList());
+        return CollectionModel.of(customersModel, linkTo(methodOn(CustomersController.class).getCustomers()).withSelfRel());
+
     }
 
     //Return customer by id
     @GetMapping("{customerId}")
-    public Customer getCustomer(@PathVariable UUID customerId) {
-        return customersRepository.findById(customerId)
+    public EntityModel<Customer> getCustomer(@PathVariable UUID customerId) {
+        Customer customer = customersRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
+
+        return EntityModel.of(customer,
+                linkTo(methodOn(CustomersController.class).getCustomer(customerId)).withSelfRel(),
+                linkTo(methodOn(CustomersController.class).getProducts(customer.getId())).withRel("products"),
+                linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers"));
+
     }
 
     //Create new customer
@@ -72,5 +85,10 @@ public class CustomersController {
     public Product createCustomer(@PathVariable UUID customerId, @RequestBody Product product) {
         product.setCustomerId(customerId);
         return productRepository.save(product);
+    }
+
+    @GetMapping("{customerId}/products")
+    public List<Product> getProducts(@PathVariable UUID customerId) {
+        return productRepository.findAllByCustomerId(customerId);
     }
 }
