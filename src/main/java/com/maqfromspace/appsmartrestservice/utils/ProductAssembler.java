@@ -8,6 +8,8 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -17,10 +19,12 @@ public class ProductAssembler implements RepresentationModelAssembler<Product, E
     @NonNull
     public EntityModel<Product> toModel(@NonNull Product product) {
 
+        UUID customerId = product.getCustomer().getId();
+        UUID productId = product.getId();
         return EntityModel.of(product,
-                linkTo(methodOn(ProductController.class).getProduct(product.getId())).withSelfRel(),
-                linkTo(methodOn(CustomersController.class).getCustomer(product.getCustomerId())).withRel("customer"),
-                linkTo(methodOn(CustomersController.class).getProducts(product.getCustomerId())).withRel("allCustomerProducts"),
-                linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers"));
+                linkTo(methodOn(ProductController.class).getProduct(productId)).withSelfRel(),
+                linkTo(methodOn(CustomersController.class).getCustomer(customerId)).withRel("customer"),
+                linkTo(methodOn(CustomersController.class).getProducts(customerId)).withRel("allCustomerProducts"),
+                linkTo(methodOn(CustomersController.class).getCustomers()).withRel("allCustomers"));
     }
 }

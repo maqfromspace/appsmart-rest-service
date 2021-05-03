@@ -9,7 +9,6 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 //Product controller
@@ -40,7 +39,6 @@ public class ProductController {
                     x.setTitle(product.getTitle());
                     x.setPrice(product.getPrice());
                     x.setDescription(product.getDescription());
-                    x.setModifiedAt(LocalDateTime.now());
                     return productRepository.save(x);
                 })
                 .orElseThrow(() -> new ProductNotFoundException(productId));

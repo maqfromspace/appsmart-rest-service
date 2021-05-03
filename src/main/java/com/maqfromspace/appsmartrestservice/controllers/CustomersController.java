@@ -104,8 +104,12 @@ public class CustomersController {
     //Create new product for customer
     @PostMapping("{customerId}/products")
     public ResponseEntity<EntityModel<Product>> createProduct(@PathVariable UUID customerId, @RequestBody Product product) {
-        product.setCustomerId(customerId);
-        Product savedProduct = productRepository.save(product);
+        Product savedProduct = customersRepository.findByIdAndDeleteFlagIsFalse(customerId)
+                .map(x -> {
+                    product.setCustomer(x);
+                    return productRepository.save(product);
+                })
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
         URI location = linkTo(methodOn(CustomersController.class).getCustomer(savedProduct.getId())).withSelfRel().toUri();
         return ResponseEntity.created(location)
                 .body(productAssembler.toModel(product));
