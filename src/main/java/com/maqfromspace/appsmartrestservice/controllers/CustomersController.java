@@ -5,6 +5,7 @@ import com.maqfromspace.appsmartrestservice.entities.Product;
 import com.maqfromspace.appsmartrestservice.exceptions.CustomerNotFoundException;
 import com.maqfromspace.appsmartrestservice.repositories.CustomersRepository;
 import com.maqfromspace.appsmartrestservice.repositories.ProductRepository;
+import com.maqfromspace.appsmartrestservice.utils.CustomerAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -27,10 +28,12 @@ public class CustomersController {
 
     private final CustomersRepository customersRepository;
     private final ProductRepository productRepository;
+    private final CustomerAssembler customerAssembler;
 
-    public CustomersController(@Autowired CustomersRepository customersRepository, @Autowired ProductRepository productRepository) {
+    public CustomersController(@Autowired CustomersRepository customersRepository, @Autowired ProductRepository productRepository, @Autowired CustomerAssembler customerAssembler) {
         this.customersRepository = customersRepository;
         this.productRepository = productRepository;
+        this.customerAssembler = customerAssembler;
     }
 
     //Get list of all customers that have not been deleted
@@ -38,10 +41,7 @@ public class CustomersController {
     public ResponseEntity<CollectionModel<EntityModel<Customer>>> getCustomers() {
         List<EntityModel<Customer>> customersModel = customersRepository.findAllByDeleteFlagIsFalse()
                 .stream()
-                .map(customer -> EntityModel.of(customer,
-                        linkTo(methodOn(CustomersController.class).getCustomer(customer.getId())).withSelfRel(),
-                        linkTo(methodOn(CustomersController.class).getProducts(customer.getId())).withRel("products"),
-                        linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers")))
+                .map(customerAssembler::toModel)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(
                 CollectionModel.of(customersModel,
@@ -55,11 +55,7 @@ public class CustomersController {
     public ResponseEntity<EntityModel<Customer>> getCustomer(@PathVariable UUID customerId) {
         Customer customer = customersRepository.findByIdAndDeleteFlagIsFalse(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
-
-        return ResponseEntity.ok(EntityModel.of(customer,
-                linkTo(methodOn(CustomersController.class).getCustomer(customerId)).withSelfRel(),
-                linkTo(methodOn(CustomersController.class).getProducts(customer.getId())).withRel("products"),
-                linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers")));
+        return ResponseEntity.ok(customerAssembler.toModel(customer));
 
     }
 
@@ -69,10 +65,7 @@ public class CustomersController {
         Customer savedCostumer = customersRepository.save(customer);
         URI location = linkTo(methodOn(CustomersController.class).getCustomer(savedCostumer.getId())).withSelfRel().toUri();
         return ResponseEntity.created(location)
-                .body(EntityModel.of(savedCostumer,
-                        linkTo(methodOn(CustomersController.class).getCustomer(savedCostumer.getId())).withSelfRel(),
-                        linkTo(methodOn(CustomersController.class).getProducts(savedCostumer.getId())).withRel("products"),
-                        linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers")));
+                .body(customerAssembler.toModel(customer));
     }
 
     //Edit customer
@@ -85,10 +78,7 @@ public class CustomersController {
                     return customersRepository.save(x);
                 })
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
-        return ResponseEntity.ok(EntityModel.of(editedCustomer,
-                        linkTo(methodOn(CustomersController.class).getCustomer(editedCustomer.getId())).withSelfRel(),
-                        linkTo(methodOn(CustomersController.class).getProducts(editedCustomer.getId())).withRel("products"),
-                        linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers")));
+        return ResponseEntity.ok(customerAssembler.toModel(editedCustomer));
 
     }
 
@@ -101,10 +91,7 @@ public class CustomersController {
                     return customersRepository.save(customer);
                 })
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
-        return ResponseEntity.ok(EntityModel.of(deletedCustomer,
-                linkTo(methodOn(CustomersController.class).getCustomer(deletedCustomer.getId())).withSelfRel(),
-                linkTo(methodOn(CustomersController.class).getProducts(deletedCustomer.getId())).withRel("products"),
-                linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers")));
+        return ResponseEntity.ok(customerAssembler.toModel(deletedCustomer));
     }
 
     //Create new product for customer
