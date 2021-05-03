@@ -6,6 +6,7 @@ import com.maqfromspace.appsmartrestservice.exceptions.CustomerNotFoundException
 import com.maqfromspace.appsmartrestservice.repositories.CustomersRepository;
 import com.maqfromspace.appsmartrestservice.repositories.ProductRepository;
 import com.maqfromspace.appsmartrestservice.utils.CustomerAssembler;
+import com.maqfromspace.appsmartrestservice.utils.ProductAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -29,11 +30,17 @@ public class CustomersController {
     private final CustomersRepository customersRepository;
     private final ProductRepository productRepository;
     private final CustomerAssembler customerAssembler;
+    private final ProductAssembler productAssembler;
 
-    public CustomersController(@Autowired CustomersRepository customersRepository, @Autowired ProductRepository productRepository, @Autowired CustomerAssembler customerAssembler) {
+
+    public CustomersController(@Autowired CustomersRepository customersRepository,
+                               @Autowired ProductRepository productRepository,
+                               @Autowired CustomerAssembler customerAssembler,
+                               @Autowired ProductAssembler productAssembler) {
         this.customersRepository = customersRepository;
         this.productRepository = productRepository;
         this.customerAssembler = customerAssembler;
+        this.productAssembler = productAssembler;
     }
 
     //Get list of all customers that have not been deleted
@@ -101,11 +108,7 @@ public class CustomersController {
         Product savedProduct = productRepository.save(product);
         URI location = linkTo(methodOn(CustomersController.class).getCustomer(savedProduct.getId())).withSelfRel().toUri();
         return ResponseEntity.created(location)
-                .body(EntityModel.of(savedProduct,
-                        linkTo(methodOn(ProductController.class).getProduct(savedProduct.getId())).withSelfRel(),
-                        linkTo(methodOn(CustomersController.class).getCustomer(savedProduct.getCustomerId())).withRel("customer"),
-                        linkTo(methodOn(CustomersController.class).getProducts(savedProduct.getCustomerId())).withRel("allCustomerProducts"),
-                        linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers")));
+                .body(productAssembler.toModel(product));
     }
 
     //Get customer's products
@@ -113,11 +116,7 @@ public class CustomersController {
     public ResponseEntity<CollectionModel<EntityModel<Product>>> getProducts(@PathVariable UUID customerId) {
         List<EntityModel<Product>> customersModel = productRepository.findByCustomerIdAndDeleteFlagIsFalse(customerId)
                 .stream()
-                .map(product -> EntityModel.of(product,
-                        linkTo(methodOn(ProductController.class).getProduct(product.getId())).withSelfRel(),
-                        linkTo(methodOn(CustomersController.class).getCustomer(product.getCustomerId())).withRel("customer"),
-                        linkTo(methodOn(CustomersController.class).getProducts(product.getCustomerId())).withRel("allCustomerProducts"),
-                        linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers")))
+                .map(productAssembler::toModel)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(
                 CollectionModel.of(customersModel,

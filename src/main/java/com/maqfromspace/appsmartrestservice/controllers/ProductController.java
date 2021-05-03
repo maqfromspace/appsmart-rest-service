@@ -3,6 +3,7 @@ package com.maqfromspace.appsmartrestservice.controllers;
 import com.maqfromspace.appsmartrestservice.entities.Product;
 import com.maqfromspace.appsmartrestservice.exceptions.ProductNotFoundException;
 import com.maqfromspace.appsmartrestservice.repositories.ProductRepository;
+import com.maqfromspace.appsmartrestservice.utils.ProductAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
@@ -11,18 +12,16 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 //Product controller
 @RestController
 @RequestMapping("products")
 public class ProductController {
 
     private final ProductRepository productRepository;
-
-    public ProductController(@Autowired ProductRepository productRepository) {
+    private final ProductAssembler productAssembler;
+    public ProductController(@Autowired ProductRepository productRepository, @Autowired ProductAssembler productAssembler) {
         this.productRepository = productRepository;
+        this.productAssembler = productAssembler;
     }
 
     //Return product by id
@@ -30,11 +29,7 @@ public class ProductController {
     public ResponseEntity<EntityModel<Product>> getProduct(@PathVariable UUID productId) {
         Product product = productRepository.findByIdAndDeleteFlagIsFalse(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
-        return ResponseEntity.ok(EntityModel.of(product,
-                linkTo(methodOn(ProductController.class).getProduct(product.getId())).withSelfRel(),
-                linkTo(methodOn(CustomersController.class).getCustomer(product.getCustomerId())).withRel("customer"),
-                linkTo(methodOn(CustomersController.class).getProducts(product.getCustomerId())).withRel("allCustomerProducts"),
-                linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers")));
+        return ResponseEntity.ok(productAssembler.toModel(product));
     }
 
     //Edit product
@@ -49,11 +44,7 @@ public class ProductController {
                     return productRepository.save(x);
                 })
                 .orElseThrow(() -> new ProductNotFoundException(productId));
-        return ResponseEntity.ok(EntityModel.of(editedProduct,
-                linkTo(methodOn(ProductController.class).getProduct(editedProduct.getId())).withSelfRel(),
-                linkTo(methodOn(CustomersController.class).getCustomer(editedProduct.getCustomerId())).withRel("customer"),
-                linkTo(methodOn(CustomersController.class).getProducts(editedProduct.getCustomerId())).withRel("allCustomerProducts"),
-                linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers")));
+        return ResponseEntity.ok(productAssembler.toModel(editedProduct));
     }
 
     //Delete product
@@ -65,10 +56,6 @@ public class ProductController {
                     return productRepository.save(x);
                 })
                 .orElseThrow(() -> new ProductNotFoundException(productId));
-        return ResponseEntity.ok(EntityModel.of(deletedProduct,
-                linkTo(methodOn(ProductController.class).getProduct(deletedProduct.getId())).withSelfRel(),
-                linkTo(methodOn(CustomersController.class).getCustomer(deletedProduct.getCustomerId())).withRel("customer"),
-                linkTo(methodOn(CustomersController.class).getProducts(deletedProduct.getCustomerId())).withRel("allCustomerProducts"),
-                linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers")));
+        return ResponseEntity.ok(productAssembler.toModel(deletedProduct));
     }
 }
