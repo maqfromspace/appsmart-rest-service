@@ -4,10 +4,15 @@ import com.maqfromspace.appsmartrestservice.entities.Product;
 import com.maqfromspace.appsmartrestservice.exceptions.ProductNotFoundException;
 import com.maqfromspace.appsmartrestservice.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 //Product controller
 @RestController
@@ -22,15 +27,20 @@ public class ProductController {
 
     //Return product by id
     @GetMapping("{productId}")
-    public Product getProduct(@PathVariable UUID productId) {
-        return productRepository.findById(productId)
+    public ResponseEntity<EntityModel<Product>> getProduct(@PathVariable UUID productId) {
+        Product product = productRepository.findByIdAndDeleteFlagIsFalse(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
+        return ResponseEntity.ok(EntityModel.of(product,
+                linkTo(methodOn(ProductController.class).getProduct(product.getId())).withSelfRel(),
+                linkTo(methodOn(CustomersController.class).getCustomer(product.getCustomerId())).withRel("customer"),
+                linkTo(methodOn(CustomersController.class).getProducts(product.getCustomerId())).withRel("allCustomerProducts"),
+                linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers")));
     }
 
     //Edit product
     @PutMapping("{productId}")
-    public Product editProduct(@PathVariable UUID productId, @RequestBody Product product) {
-        return productRepository.findById(productId)
+    public ResponseEntity<EntityModel<Product>> editProduct(@PathVariable UUID productId, @RequestBody Product product) {
+        Product editedProduct = productRepository.findByIdAndDeleteFlagIsFalse(productId)
                 .map(x -> {
                     x.setTitle(product.getTitle());
                     x.setPrice(product.getPrice());
@@ -39,16 +49,26 @@ public class ProductController {
                     return productRepository.save(x);
                 })
                 .orElseThrow(() -> new ProductNotFoundException(productId));
+        return ResponseEntity.ok(EntityModel.of(editedProduct,
+                linkTo(methodOn(ProductController.class).getProduct(editedProduct.getId())).withSelfRel(),
+                linkTo(methodOn(CustomersController.class).getCustomer(editedProduct.getCustomerId())).withRel("customer"),
+                linkTo(methodOn(CustomersController.class).getProducts(editedProduct.getCustomerId())).withRel("allCustomerProducts"),
+                linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers")));
     }
 
     //Delete product
     @DeleteMapping("{productId}")
-    public void deleteCustomer(@PathVariable UUID productId) {
-        productRepository.findById(productId)
-                .ifPresent(product -> {
-                    product.setDeleted(true);
-                    product.setModifiedAt(LocalDateTime.now());
-                    productRepository.save(product);
-                });
+    public ResponseEntity<EntityModel<Product>> deleteProduct(@PathVariable UUID productId) {
+        Product deletedProduct = productRepository.findByIdAndDeleteFlagIsFalse(productId)
+                .map(x -> {
+                    x.setDeleteFlag(true);
+                    return productRepository.save(x);
+                })
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+        return ResponseEntity.ok(EntityModel.of(deletedProduct,
+                linkTo(methodOn(ProductController.class).getProduct(deletedProduct.getId())).withSelfRel(),
+                linkTo(methodOn(CustomersController.class).getCustomer(deletedProduct.getCustomerId())).withRel("customer"),
+                linkTo(methodOn(CustomersController.class).getProducts(deletedProduct.getCustomerId())).withRel("allCustomerProducts"),
+                linkTo(methodOn(CustomersController.class).getCustomers()).withRel("customers")));
     }
 }

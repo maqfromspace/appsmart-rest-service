@@ -1,5 +1,6 @@
 package com.maqfromspace.appsmartrestservice.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -16,8 +17,9 @@ public class Customer {
     UUID id;
     @Column
     String title;
+    @JsonIgnore
     @Column(name ="is_deleted")
-    boolean isDeleted;
+    boolean deleteFlag;
     @Column(name = "created_at")
     LocalDateTime createdAt;
     @Column(name = "modified_at")
