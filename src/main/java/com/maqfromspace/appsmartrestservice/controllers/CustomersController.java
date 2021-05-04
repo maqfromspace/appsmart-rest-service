@@ -15,16 +15,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.net.URI;
 import java.util.UUID;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 //Customers controller
 @RestController
@@ -54,6 +51,7 @@ public class CustomersController {
 
     //Get list of all customers that have not been deleted
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public PagedModel<EntityModel<Customer>> getCustomers(Pageable pageable) {
         Page<Customer> customers = customerService.getCustomers(pageable);
         return customerPagedResourcesAssembler.toModel(customers, customerAssembler);
@@ -61,26 +59,24 @@ public class CustomersController {
 
     //Get customer by id
     @GetMapping("{customerId}")
-    public ResponseEntity<EntityModel<Customer>> getCustomer(@PathVariable UUID customerId) {
+    @ResponseStatus(HttpStatus.OK)
+    public EntityModel<Customer> getCustomer(@PathVariable UUID customerId) {
         Customer customer = customerService.getCustomer(customerId);
-        return ResponseEntity.ok(customerAssembler.toModel(customer));
+        return customerAssembler.toModel(customer);
 
     }
 
     //Create new customer
     @PostMapping
-    public ResponseEntity<EntityModel<Customer>> createCustomer(@Valid @RequestBody NewCustomerRequestBody newCustomerRequestBody) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public EntityModel<Customer> createCustomer(@Valid @RequestBody NewCustomerRequestBody newCustomerRequestBody) {
         Customer savedCustomer = customerService.addCustomer(newCustomerRequestBody.toCustomer());
-        URI location = linkTo(methodOn(CustomersController.class)
-                .getCustomer(savedCustomer.getId()))
-                .withSelfRel()
-                .toUri();
-        return ResponseEntity.created(location)
-                .body(customerAssembler.toModel(savedCustomer));
+        return customerAssembler.toModel(savedCustomer);
     }
 
     //Edit customer
     @PutMapping("{customerId}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<EntityModel<Customer>> editCustomer(@NotNull @PathVariable UUID customerId, @Valid @RequestBody EditCustomerRequestBody requestBody) {
         Customer editedCustomer = customerService.editCustomer(customerId, requestBody.toCustomer());
         return ResponseEntity.ok(customerAssembler.toModel(editedCustomer));
@@ -89,22 +85,23 @@ public class CustomersController {
 
     //Delete customer
     @DeleteMapping("{customerId}")
-    public ResponseEntity<EntityModel<Customer>> deleteCustomer(@NotNull @PathVariable UUID customerId) {
+    @ResponseStatus(HttpStatus.OK)
+    public EntityModel<Customer> deleteCustomer(@NotNull @PathVariable UUID customerId) {
         Customer deletedCustomer = customerService.deleteCustomer(customerId);
-        return ResponseEntity.ok(customerAssembler.toModel(deletedCustomer));
+        return customerAssembler.toModel(deletedCustomer);
     }
 
     //Create new product for customer
     @PostMapping("{customerId}/products")
-    public ResponseEntity<EntityModel<Product>> createProduct(@NotNull @PathVariable UUID customerId, @Valid @RequestBody NewProductRequestBody newProductRequestBody) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public EntityModel<Product> createProduct(@NotNull @PathVariable UUID customerId, @Valid @RequestBody NewProductRequestBody newProductRequestBody) {
         Product savedProduct = productService.createProduct(customerId, newProductRequestBody.toProduct());
-        URI location = linkTo(methodOn(CustomersController.class).getCustomer(savedProduct.getId())).withSelfRel().toUri();
-        return ResponseEntity.created(location)
-                .body(productAssembler.toModel(savedProduct));
+        return productAssembler.toModel(savedProduct);
     }
 
     //Get customer's products
     @GetMapping("{customerId}/products")
+    @ResponseStatus(HttpStatus.OK)
     public PagedModel<EntityModel<Product>> getProducts(@NotNull @PathVariable UUID customerId, Pageable pageable) {
         Page<Product> products = productService.getCustomersProduct(customerId, pageable);
         return productPagedResourcesAssembler.toModel(products, productAssembler);

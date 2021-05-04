@@ -6,7 +6,7 @@ import com.maqfromspace.appsmartrestservice.services.product.ProductService;
 import com.maqfromspace.appsmartrestservice.utils.ProductAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
@@ -28,22 +28,25 @@ public class ProductController {
 
     //Return product by id
     @GetMapping("{productId}")
-    public ResponseEntity<EntityModel<Product>> getProduct(@NotNull @PathVariable UUID productId) {
+    @ResponseStatus(HttpStatus.OK)
+    public EntityModel<Product> getProduct(@NotNull @PathVariable UUID productId) {
         Product product = productService.getProduct(productId);
-        return ResponseEntity.ok(productAssembler.toModel(product));
+        return productAssembler.toModel(product);
     }
 
     //Edit product
     @PutMapping("{productId}")
-    public ResponseEntity<EntityModel<Product>> editProduct(@NotNull @PathVariable UUID productId, @RequestBody EditProductRequestBody editProductRequestBody) {
+    @ResponseStatus(HttpStatus.OK)
+    public EntityModel<Product> editProduct(@NotNull @PathVariable UUID productId, @RequestBody EditProductRequestBody editProductRequestBody) {
         Product editedProduct = productService.editProduct(productId, editProductRequestBody.toProduct());
-        return ResponseEntity.ok(productAssembler.toModel(editedProduct));
+        return productAssembler.toModel(editedProduct);
     }
 
     //Delete product
     @DeleteMapping("{productId}")
-    public ResponseEntity<EntityModel<Product>> deleteProduct(@NotNull @PathVariable UUID productId) {
+    @ResponseStatus(HttpStatus.OK)
+    public EntityModel<Product> deleteProduct(@NotNull @PathVariable UUID productId) {
         Product deletedProduct = productService.deleteProduct(productId);
-        return ResponseEntity.ok(productAssembler.toModel(deletedProduct));
+        return productAssembler.toModel(deletedProduct);
     }
 }
