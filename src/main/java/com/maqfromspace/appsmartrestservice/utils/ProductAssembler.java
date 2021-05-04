@@ -4,6 +4,7 @@ import com.maqfromspace.appsmartrestservice.controllers.CustomersController;
 import com.maqfromspace.appsmartrestservice.controllers.ProductController;
 import com.maqfromspace.appsmartrestservice.entities.Product;
 import lombok.NonNull;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class ProductAssembler implements RepresentationModelAssembler<Product, E
         return EntityModel.of(product,
                 linkTo(methodOn(ProductController.class).getProduct(productId)).withSelfRel(),
                 linkTo(methodOn(CustomersController.class).getCustomer(customerId)).withRel("customer"),
-                linkTo(methodOn(CustomersController.class).getProducts(customerId)).withRel("allCustomerProducts"),
-                linkTo(methodOn(CustomersController.class).getCustomers()).withRel("allCustomers"));
+                linkTo(methodOn(CustomersController.class).getProducts(customerId, Pageable.unpaged())).withRel("allCustomerProducts"),
+                linkTo(methodOn(CustomersController.class).getCustomers(Pageable.unpaged())).withRel("allCustomers"));
     }
 }
