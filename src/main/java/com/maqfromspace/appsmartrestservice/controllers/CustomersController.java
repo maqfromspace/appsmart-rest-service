@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -80,7 +79,6 @@ public class CustomersController {
         Customer editedCustomer = customersRepository.findByIdAndDeleteFlagIsFalse(customerId)
                 .map(x -> {
                     x.setTitle(customer.getTitle());
-                    x.setModifiedAt(LocalDateTime.now());
                     return customersRepository.save(x);
                 })
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
@@ -94,6 +92,8 @@ public class CustomersController {
         Customer deletedCustomer = customersRepository.findByIdAndDeleteFlagIsFalse(customerId)
                 .map(customer -> {
                     customer.setDeleteFlag(true);
+                    customer.getProductList().forEach(product ->
+                            product.setDeleteFlag(true));
                     return customersRepository.save(customer);
                 })
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
