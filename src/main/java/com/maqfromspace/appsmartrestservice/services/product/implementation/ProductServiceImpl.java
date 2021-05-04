@@ -43,11 +43,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product editProduct(UUID productId, Product product) {
         return productRepository.findByIdAndDeleteFlagIsFalse(productId)
-                .map(x -> {
-                    x.setTitle(product.getTitle());
-                    x.setPrice(product.getPrice());
-                    x.setDescription(product.getDescription());
-                    return productRepository.save(x);
+                .map(editedProduct -> {
+                    if(product.getTitle() != null)
+                        editedProduct.setTitle(product.getTitle());
+                    if(product.getPrice() != null)
+                        editedProduct.setPrice(product.getPrice());
+                    if(product.getDescription() != null)
+                        editedProduct.setDescription(product.getDescription());
+                    return productRepository.save(editedProduct);
                 })
                 .orElseThrow(() -> new ProductNotFoundException(productId));
     }

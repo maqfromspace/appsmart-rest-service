@@ -38,9 +38,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer editCustomer(UUID customerId, Customer customer) {
         return customersRepository.findByIdAndDeleteFlagIsFalse(customerId)
-                .map(x -> {
-                    x.setTitle(customer.getTitle());
-                    return customersRepository.save(x);
+                .map(currentCustomer -> {
+                    if(customer.getTitle() != null) {
+                        currentCustomer.setTitle(customer.getTitle());
+                        return customersRepository.save(currentCustomer);
+                    }
+                    else
+                        return currentCustomer;
                 })
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
     }
