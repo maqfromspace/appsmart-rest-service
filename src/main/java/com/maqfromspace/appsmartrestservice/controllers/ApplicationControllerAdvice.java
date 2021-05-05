@@ -20,7 +20,7 @@ public class ApplicationControllerAdvice {
     @ResponseBody
     @ExceptionHandler(CustomerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String CustomerNotFoundHandler(CustomerNotFoundException ex) {
+    String handleCustomerNotFound(CustomerNotFoundException ex) {
         return ex.getMessage();
     }
 
@@ -28,7 +28,7 @@ public class ApplicationControllerAdvice {
     @ResponseBody
     @ExceptionHandler(ProductNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String ProductNotFoundHandler(ProductNotFoundException ex) {
+    String handleProductNotFound(ProductNotFoundException ex) {
         return ex.getMessage();
     }
 
