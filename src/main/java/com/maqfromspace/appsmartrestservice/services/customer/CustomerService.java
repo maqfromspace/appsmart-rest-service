@@ -9,14 +9,9 @@ import java.util.UUID;
 
 @Service
 public interface CustomerService {
-    //Get customers page
     Page<Customer> getCustomers(Pageable pageable);
-    //Get customer with id {customerId}
     Customer getCustomer(UUID customerId);
-    //Create new customer
     Customer addCustomer(Customer customer);
-    //Edit customer with id {customerId}
     Customer editCustomer(UUID customerId, Customer customer);
-    //Delete customer with id {customerId}
     Customer deleteCustomer(UUID customerId);
 }
