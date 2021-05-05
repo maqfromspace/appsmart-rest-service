@@ -1,7 +1,7 @@
 package com.maqfromspace.appsmartrestservice.controllers;
 
+import com.maqfromspace.appsmartrestservice.dto.EditProductRequestDto;
 import com.maqfromspace.appsmartrestservice.entities.Product;
-import com.maqfromspace.appsmartrestservice.entities.requestbodies.EditProductRequestBody;
 import com.maqfromspace.appsmartrestservice.services.product.ProductService;
 import com.maqfromspace.appsmartrestservice.utils.ProductAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +37,8 @@ public class ProductController {
     //Edit product
     @PutMapping("{productId}")
     @ResponseStatus(HttpStatus.OK)
-    public EntityModel<Product> editProduct(@NotNull @PathVariable UUID productId, @RequestBody EditProductRequestBody editProductRequestBody) {
-        Product editedProduct = productService.editProduct(productId, editProductRequestBody.toProduct());
+    public EntityModel<Product> editProduct(@NotNull @PathVariable UUID productId, @RequestBody EditProductRequestDto editProductRequestDto) {
+        Product editedProduct = productService.editProduct(productId, editProductRequestDto.toProduct());
         return productAssembler.toModel(editedProduct);
     }
 

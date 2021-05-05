@@ -1,10 +1,10 @@
 package com.maqfromspace.appsmartrestservice.controllers;
 
+import com.maqfromspace.appsmartrestservice.dto.EditCustomerRequestDto;
+import com.maqfromspace.appsmartrestservice.dto.NewCustomerRequestDto;
+import com.maqfromspace.appsmartrestservice.dto.NewProductRequestDto;
 import com.maqfromspace.appsmartrestservice.entities.Customer;
 import com.maqfromspace.appsmartrestservice.entities.Product;
-import com.maqfromspace.appsmartrestservice.entities.requestbodies.EditCustomerRequestBody;
-import com.maqfromspace.appsmartrestservice.entities.requestbodies.NewCustomerRequestBody;
-import com.maqfromspace.appsmartrestservice.entities.requestbodies.NewProductRequestBody;
 import com.maqfromspace.appsmartrestservice.services.customer.CustomerService;
 import com.maqfromspace.appsmartrestservice.services.product.ProductService;
 import com.maqfromspace.appsmartrestservice.utils.CustomerAssembler;
@@ -69,16 +69,16 @@ public class CustomersController {
     //Create new customer
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EntityModel<Customer> createCustomer(@Valid @RequestBody NewCustomerRequestBody newCustomerRequestBody) {
-        Customer savedCustomer = customerService.addCustomer(newCustomerRequestBody.toCustomer());
+    public EntityModel<Customer> createCustomer(@Valid @RequestBody NewCustomerRequestDto newCustomerRequestDto) {
+        Customer savedCustomer = customerService.addCustomer(newCustomerRequestDto.toCustomer());
         return customerAssembler.toModel(savedCustomer);
     }
 
     //Edit customer
     @PutMapping("{customerId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<EntityModel<Customer>> editCustomer(@NotNull @PathVariable UUID customerId, @Valid @RequestBody EditCustomerRequestBody requestBody) {
-        Customer editedCustomer = customerService.editCustomer(customerId, requestBody.toCustomer());
+    public ResponseEntity<EntityModel<Customer>> editCustomer(@NotNull @PathVariable UUID customerId, @Valid @RequestBody EditCustomerRequestDto editCustomerRequestDto) {
+        Customer editedCustomer = customerService.editCustomer(customerId, editCustomerRequestDto.toCustomer());
         return ResponseEntity.ok(customerAssembler.toModel(editedCustomer));
 
     }
@@ -94,8 +94,8 @@ public class CustomersController {
     //Create new product for customer
     @PostMapping("{customerId}/products")
     @ResponseStatus(HttpStatus.CREATED)
-    public EntityModel<Product> createProduct(@NotNull @PathVariable UUID customerId, @Valid @RequestBody NewProductRequestBody newProductRequestBody) {
-        Product savedProduct = productService.createProduct(customerId, newProductRequestBody.toProduct());
+    public EntityModel<Product> createProduct(@NotNull @PathVariable UUID customerId, @Valid @RequestBody NewProductRequestDto newProductRequestDto) {
+        Product savedProduct = productService.createProduct(customerId, newProductRequestDto.toProduct());
         return productAssembler.toModel(savedProduct);
     }
 
