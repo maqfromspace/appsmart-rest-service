@@ -15,24 +15,24 @@ public class Product implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue
-    UUID id;
+    private UUID id;
     @Column
-    String title;
+    private String title;
     @Column
-    String description;
+    private String description;
     @Column
-    Double price;
+    private Double price;
     @JsonIgnore
     @Column(name = "is_deleted")
-    boolean deleteFlag;
+    private boolean deleteFlag;
     @Column(name = "created_at")
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
     @Column(name = "modified_at")
-    LocalDateTime modifiedAt;
+    private LocalDateTime modifiedAt;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
     @JsonIgnore
-    Customer customer;
+    private Customer customer;
 
     @PrePersist
     public void prePersist() {

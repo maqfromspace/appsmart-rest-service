@@ -19,19 +19,19 @@ public class Customer implements Serializable {
 
     @Id
     @GeneratedValue
-    UUID id;
+    private UUID id;
     @Column
-    String title;
+    private String title;
     @JsonIgnore
     @Column(name ="is_deleted")
-    boolean deleteFlag;
+    private boolean deleteFlag;
     @Column(name = "created_at")
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
     @Column(name = "modified_at")
-    LocalDateTime modifiedAt;
+    private LocalDateTime modifiedAt;
     @JsonIgnore
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    List<Product> productList;
+    private List<Product> productList;
 
     @PrePersist
     public void prePersist() {
