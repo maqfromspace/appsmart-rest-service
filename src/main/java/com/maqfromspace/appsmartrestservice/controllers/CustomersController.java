@@ -25,7 +25,7 @@ import java.util.UUID;
 
 //Customers controller
 @RestController
-@RequestMapping("customers")
+@RequestMapping("api/v1/customers")
 public class CustomersController {
 
     private final CustomerAssembler customerAssembler;
