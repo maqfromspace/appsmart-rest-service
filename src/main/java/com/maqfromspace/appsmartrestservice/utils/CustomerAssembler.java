@@ -2,7 +2,6 @@ package com.maqfromspace.appsmartrestservice.utils;
 
 import com.maqfromspace.appsmartrestservice.controllers.CustomersController;
 import com.maqfromspace.appsmartrestservice.entities.Customer;
-import lombok.NonNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -16,8 +15,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 //Assembler for creating EntityModel from Customer entity
 @Component
 public class CustomerAssembler implements RepresentationModelAssembler<Customer, EntityModel<Customer>> {
-    @NonNull
-    public EntityModel<Customer> toModel(@NonNull Customer customer) {
+    public EntityModel<Customer> toModel(Customer customer) {
 
         UUID customerId = customer.getId();
         return EntityModel.of(customer,

@@ -3,7 +3,6 @@ package com.maqfromspace.appsmartrestservice.utils;
 import com.maqfromspace.appsmartrestservice.controllers.CustomersController;
 import com.maqfromspace.appsmartrestservice.controllers.ProductController;
 import com.maqfromspace.appsmartrestservice.entities.Product;
-import lombok.NonNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
@@ -17,8 +16,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 //Assembler for creating EntityModel from Product entity
 @Component
 public class ProductAssembler implements RepresentationModelAssembler<Product, EntityModel<Product>> {
-    @NonNull
-    public EntityModel<Product> toModel(@NonNull Product product) {
+    public EntityModel<Product> toModel(Product product) {
 
         UUID customerId = product.getCustomer().getId();
         UUID productId = product.getId();
