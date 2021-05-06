@@ -3,31 +3,34 @@ package com.maqfromspace.appsmartrestservice.controllers;
 import com.jayway.jsonpath.JsonPath;
 import com.maqfromspace.appsmartrestservice.repositories.CustomersRepository;
 import com.maqfromspace.appsmartrestservice.repositories.ProductRepository;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.UUID;
-
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@Sql({"/delete_user_role.sql", "/insert_role.sql", "/insert_user.sql", "/insert_user_role.sql"})
 public class ProductControllerTest {
     public static final String PRODUCT_URL = "http://localhost:8080/api/v1/products";
     public static final String CUSTOMERS_URL = "http://localhost:8080/api/v1/customers";
+    public static final String LOGIN_URL = "http://localhost:8080/api/v1/auth/login";
+
 
     @Autowired
     MockMvc mockMvc;
@@ -35,6 +38,23 @@ public class ProductControllerTest {
     CustomersRepository customersRepository;
     @Autowired
     ProductRepository productRepository;
+
+    private String getToken() throws Exception {
+        String username = "admin";
+        String password = "adminpassword";
+        String response = mockMvc
+                .perform(
+                        post(LOGIN_URL)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{" +
+                                        "\"username\":\"" + username + "\"," +
+                                        "\"password\":\"" + password + "\"" +
+                                        "}")
+                ).andExpect(MockMvcResultMatchers.jsonPath("$.token").isNotEmpty()).andReturn().getResponse().getContentAsString();
+        JSONObject jsonObject = new JSONObject(response);
+        return "Bearer_" + jsonObject.get("token");
+    }
+
 
     private ResultActions addCustomer(String title) throws Exception {
         return mockMvc
@@ -51,11 +71,12 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
     }
 
-    private ResultActions deleteCustomer(String uuid, String title) throws Exception {
+    private void deleteCustomer(String uuid, String title) throws Exception {
         System.out.println(uuid);
-        return mockMvc
+        mockMvc
                 .perform(
                         delete(CUSTOMERS_URL + "/" + uuid)
+                                .header(HttpHeaders.AUTHORIZATION, getToken())
                 )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
@@ -64,9 +85,41 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
     }
+    private void deleteCustomerWithInvalidToken(String uuid) throws Exception {
+        mockMvc
+                .perform(
+                        delete(CUSTOMERS_URL + "/" + uuid)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer_blablablahackeverythinksqlinjections")
+                )
+                .andExpect(status().isForbidden())
+                .andExpect(MockMvcResultMatchers.content().string("JWT token isn't valid or expired"));
 
-    private ResultActions getProduct(String productId, String productTitle, Double productPrice, String productDescription) throws Exception {
-        return mockMvc
+
+    }
+
+    private void deleteCustomerWithNullToken(String uuid) throws Exception {
+        mockMvc
+                .perform(
+                        delete(CUSTOMERS_URL + "/" + uuid)
+                )
+                .andExpect(status().isForbidden())
+                .andExpect(MockMvcResultMatchers.content().string("JWT token isn't valid or expired"));
+
+    }
+
+    private void deleteCustomerWithInvalidBearerToken(String uuid) throws Exception {
+        mockMvc
+                .perform(
+                        delete(CUSTOMERS_URL + "/" + uuid)
+                                .header(HttpHeaders.AUTHORIZATION, "BEasdqer_aqwe")
+                )
+                .andExpect(status().isForbidden())
+                .andExpect(MockMvcResultMatchers.content().string("JWT token isn't valid or expired"));
+
+    }
+
+    private void getProduct(String productId, String productTitle, Double productPrice, String productDescription) throws Exception {
+        mockMvc
                 .perform(
                         get(PRODUCT_URL + "/" + productId)
                 )
@@ -79,15 +132,15 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
     }
-    private ResultActions getDeletedProduct(String productId) throws Exception {
-        return mockMvc
+
+    private void getDeletedProduct(String productId) throws Exception {
+        mockMvc
                 .perform(
                         get(PRODUCT_URL + "/" + productId)
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().string("Could not found product with id " + productId));
     }
-
 
 
     private ResultActions addProductToCustomer(String customerId, String productTitle, Double productPrice, String productDescription) throws Exception {
@@ -110,8 +163,8 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
     }
 
-    private ResultActions getCustomersProduct(String customerId, String productId, String productTitle, Double productPrice, String productDescription) throws Exception {
-        return mockMvc
+    private void getCustomersProduct(String customerId, String productId, String productTitle, Double productPrice, String productDescription) throws Exception {
+        mockMvc
                 .perform(
                         get(CUSTOMERS_URL + "/" + customerId + "/" + "products")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -123,8 +176,8 @@ public class ProductControllerTest {
 
     }
 
-    private ResultActions getCustomersProductAfterDeleting(String customerId) throws Exception {
-        return mockMvc
+    private void getCustomersProductAfterDeleting(String customerId) throws Exception {
+        mockMvc
                 .perform(
                         get(CUSTOMERS_URL + "/" + customerId + "/" + "products")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -135,11 +188,12 @@ public class ProductControllerTest {
 
     }
 
-    private ResultActions editProduct(String uuid, String productTitle, Double productPrice, String productDescription) throws Exception {
-        return mockMvc
+    private void editProduct(String uuid, String productTitle, Double productPrice, String productDescription) throws Exception {
+        mockMvc
                 .perform(
                         put(PRODUCT_URL + "/" + uuid)
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, getToken())
                                 .content("{" +
                                         "\"title\":\"" + productTitle + "\"," +
                                         "\"price\":" + productPrice + "," +
@@ -155,11 +209,12 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
     }
 
-    private ResultActions editProductTitle(String uuid, String productTitle) throws Exception {
-        return mockMvc
+    private void editProductTitle(String uuid, String productTitle) throws Exception {
+        mockMvc
                 .perform(
                         put(PRODUCT_URL + "/" + uuid)
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, getToken())
                                 .content("{" +
                                         "\"title\":\"" + productTitle + "\"" +
                                         "}")
@@ -169,11 +224,12 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(productTitle));
     }
 
-    private ResultActions editProductPrice(String uuid, Double productPrice) throws Exception {
-        return mockMvc
+    private void editProductPrice(String uuid, Double productPrice) throws Exception {
+        mockMvc
                 .perform(
                         put(PRODUCT_URL + "/" + uuid)
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, getToken())
                                 .content("{" +
                                         "\"price\":" + productPrice +
                                         "}")
@@ -183,11 +239,12 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(productPrice));
     }
 
-    private ResultActions editProductDescription(String uuid, String description) throws Exception {
-        return mockMvc
+    private void editProductDescription(String uuid, String description) throws Exception {
+        mockMvc
                 .perform(
                         put(PRODUCT_URL + "/" + uuid)
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, getToken())
                                 .content("{" +
                                         "\"description\":\"" + description + "\"" +
                                         "}")
@@ -197,11 +254,13 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(description));
     }
 
-    private ResultActions deleteProduct(String uuid, String productTitle, Double productPrice, String productDescription) throws Exception {
+    private void deleteProduct(String uuid, String productTitle, Double productPrice, String productDescription) throws Exception {
         System.out.println(uuid);
-        return mockMvc
+        mockMvc
                 .perform(
                         delete(PRODUCT_URL + "/" + uuid)
+                                .header(HttpHeaders.AUTHORIZATION, getToken())
+
                 )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(uuid))
@@ -213,11 +272,12 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
     }
 
-    private ResultActions deleteNonexistentProduct(String uuid) throws Exception {
+    private void deleteNonexistentProduct(String uuid) throws Exception {
         System.out.println(uuid);
-        return mockMvc
+        mockMvc
                 .perform(
-                        delete(PRODUCT_URL + "/" + uuid)
+                        delete(PRODUCT_URL + "/" + uuid).header(HttpHeaders.AUTHORIZATION, getToken())
+
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().string("Could not found product with id " + uuid));
@@ -299,5 +359,19 @@ public class ProductControllerTest {
 
         deleteCustomer(customerId, "Max");
         getDeletedProduct(productId);
+    }
+
+    @Test
+    public void testProductController_deleteUserWithInvalidToken() throws Exception {
+        deleteCustomerWithInvalidToken("productId");
+    }
+
+    @Test
+    public void testProductController_deleteUserWithNullToken() throws Exception {
+        deleteCustomerWithNullToken("productId");
+    }
+    @Test
+    public void testProductController_deleteUserWithInvalidBearerToken() throws Exception {
+        deleteCustomerWithInvalidBearerToken("productId");
     }
 }
