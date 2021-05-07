@@ -36,14 +36,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product deleteProduct(UUID productId) {
-        Product product = productRepository.findByIdAndDeleteFlagIsFalse(productId)
+        return productRepository.findByIdAndDeleteFlagIsFalse(productId)
                 .map(x -> {
                     x.setDeleteFlag(true);
+                    log.info("IN deleteProduct - product with id: {} successfully deleted", productId);
                     return productRepository.save(x);
                 })
                 .orElseThrow(() -> new ProductNotFoundException(productId));
-        log.info("IN deleteProduct - product with id: {} successfully deleted", productId);
-        return product;
     }
 
     @Override
