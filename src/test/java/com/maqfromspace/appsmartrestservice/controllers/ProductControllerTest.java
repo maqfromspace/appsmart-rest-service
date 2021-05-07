@@ -68,7 +68,7 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(title))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isNotEmpty());
     }
 
     private void deleteCustomer(String uuid, String title) throws Exception {
@@ -83,7 +83,7 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(title))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isNotEmpty());
     }
     private void deleteCustomerWithInvalidToken(String uuid) throws Exception {
         mockMvc
@@ -130,7 +130,7 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(productDescription))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isNotEmpty());
     }
 
     private void getDeletedProduct(String productId) throws Exception {
@@ -160,7 +160,7 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(productDescription))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isNotEmpty());
     }
 
     private void getCustomersProduct(String customerId, String productId, String productTitle, Double productPrice, String productDescription) throws Exception {
@@ -171,8 +171,8 @@ public class ProductControllerTest {
                 )
                 .andExpect(status().isOk())
 
-                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.productList", hasSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.productList[0].id").value(productId));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content", hasSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content[0].id").value(productId));
 
     }
 
@@ -184,7 +184,7 @@ public class ProductControllerTest {
                 )
                 .andExpect(status().isOk())
 
-                .andExpect(MockMvcResultMatchers.jsonPath("$._embedded.productList").doesNotExist());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.content").isEmpty());
 
     }
 
@@ -206,7 +206,7 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(productDescription))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isNotEmpty());
     }
 
     private void editProductTitle(String uuid, String productTitle) throws Exception {
@@ -269,7 +269,7 @@ public class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.description").value(productDescription))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isNotEmpty());
     }
 
     private void deleteNonexistentProduct(String uuid) throws Exception {

@@ -10,9 +10,9 @@
     </parent>
     <groupId>com.maqfromspace</groupId>
     <artifactId>appsmart-rest-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>v1</version>
     <name>appsmart-rest-service</name>
-    <description>REST service for appsmart</description>
+    <description>OpenApi description for " Customer products" service</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -75,6 +75,18 @@
             <artifactId>jjwt</artifactId>
             <version>0.9.1</version>
         </dependency>
+
+        <!-- Documentation -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.9.2</version>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -88,6 +100,7 @@
         </profile>
     </profiles>
     <build>
+        <finalName>appsmart-rest-service</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>

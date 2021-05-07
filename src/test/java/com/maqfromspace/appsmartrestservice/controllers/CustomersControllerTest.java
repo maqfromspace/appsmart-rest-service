@@ -63,7 +63,7 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(title))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isNotEmpty());
     }
     private void getCustomers() throws Exception {
         mockMvc
@@ -82,7 +82,7 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(title))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isNotEmpty());
     }
 
     private void getCustomerAfterEditWithEmptyBody(String uuid, String title) throws Exception {
@@ -95,7 +95,7 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(title))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isNotEmpty());
     }
     private void editCustomer(String uuid, String title) throws Exception {
         mockMvc
@@ -110,7 +110,7 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(title))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isNotEmpty());
     }
 
     private void editCustomerWithEmptyBody(String uuid) throws Exception {
@@ -125,7 +125,7 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isNotEmpty());
     }
 
     private ResultActions addCustomer(String title) throws Exception {
@@ -140,7 +140,7 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(title))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isNotEmpty());
     }
     private void addCustomerWithEmptyTitle() throws Exception {
         mockMvc
@@ -166,7 +166,7 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value(title))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isNotEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$.links").isNotEmpty());
     }
 
     private void deleteCustomerWithInvalidUuid(UUID uuid) throws Exception {

@@ -5,6 +5,10 @@ import com.maqfromspace.appsmartrestservice.dto.AuthenticationResponseDto;
 import com.maqfromspace.appsmartrestservice.entities.User;
 import com.maqfromspace.appsmartrestservice.security.jwt.JwtTokenProvider;
 import com.maqfromspace.appsmartrestservice.services.user.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,11 +20,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 /**
  * Authentication controller
  */
 @RestController
 @RequestMapping(value = "/api/v1/auth")
+@Api(tags = {"Authentication"})
 public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
@@ -37,10 +44,16 @@ public class AuthenticationController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<AuthenticationResponseDto> login(@RequestBody AuthenticationRequestDto requestDto) {
+    @ApiOperation(value = "Get token by username and password",
+            notes = "Method allows get Bearer token")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = ""),
+            @ApiResponse(code = 400, message = "Field 'username' can't be null"),
+            @ApiResponse(code = 403, message = "Invalid username or password")})
+    public ResponseEntity<AuthenticationResponseDto> login(@Valid @RequestBody AuthenticationRequestDto authenticationRequestDto) {
         try {
-            String username = requestDto.getUsername();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, requestDto.getPassword()));
+            String username = authenticationRequestDto.getUsername();
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, authenticationRequestDto.getPassword()));
             User user = userService.findByUsername(username);
             String token = jwtTokenProvider.createToken(username, user.getRoles());
 

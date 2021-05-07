@@ -1,6 +1,7 @@
 package com.maqfromspace.appsmartrestservice.utils;
 
 import com.maqfromspace.appsmartrestservice.controllers.CustomersController;
+import com.maqfromspace.appsmartrestservice.controllers.ProductController;
 import com.maqfromspace.appsmartrestservice.entities.Customer;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.EntityModel;
@@ -20,7 +21,7 @@ public class CustomerAssembler implements RepresentationModelAssembler<Customer,
         UUID customerId = customer.getId();
         return EntityModel.of(customer,
                 linkTo(methodOn(CustomersController.class).getCustomer(customerId)).withSelfRel(),
-                linkTo(methodOn(CustomersController.class).getProducts(customerId, Pageable.unpaged())).withRel("products"),
+                linkTo(methodOn(ProductController.class).getProducts(customerId, Pageable.unpaged())).withRel("products"),
                 linkTo(methodOn(CustomersController.class).getCustomers(Pageable.unpaged())).withRel("customers"));
     }
 }
