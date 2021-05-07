@@ -89,7 +89,7 @@ public class CustomersController {
             @ApiResponse(code = 403, message = "JWT token isn't valid or expired"),
             @ApiResponse(code = 404, message = "Could not found customer with id 5e0062b5-9e54-4bdf-9b61-ee695b3beb4d")
     })
-    @ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer_eyJhbGci1OiJIUzI1NiJ9.eyJzdWIiOiJNYWtzaW0iLCJyb2xlcyI6WyJBRE1JTl9ST0xFIl0sImlhdCI6MTYyMDIzODIxMywiZXhwIjoxNjIwMjM4MjczfQ.RNWOoxFA1NsdnvBka_obrKRODYjk-eCZ_jHQboPvokk")
+    @ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer_eyJhbGci1OiJIUzI1NiJ9.eyJzdWIiOiJNYWtzaW0iLCJyb2xlcyI6WyJBRE1JTl9ST0xFIl0sImlhdCI6MTYyMDIzODIxMywiZXhwIjoxNjIwMjM4MjczfQ.RNWOoxFA1NsdnvBka_obrKRODYjk-eCZ_jHQboPvokk")
     @PutMapping("{customerId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<EntityModel<Customer>> editCustomer(@NotNull @PathVariable UUID customerId, @Valid @RequestBody EditCustomerRequestDto editCustomerRequestDto) {
@@ -106,7 +106,7 @@ public class CustomersController {
             @ApiResponse(code = 403, message = "JWT token isn't valid or expired"),
             @ApiResponse(code = 404, message = "Could not found customer with id 5e0062b5-9e54-4bdf-9b61-ee695b3beb4d")
     })
-    @ApiImplicitParam(name = "Authorization", value = "Bearer token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer_eyJhbGci1OiJIUzI1NiJ9.eyJzdWIiOiJNYWtzaW0iLCJyb2xlcyI6WyJBRE1JTl9ST0xFIl0sImlhdCI6MTYyMDIzODIxMywiZXhwIjoxNjIwMjM4MjczfQ.RNWOoxFA1NsdnvBka_obrKRODYjk-eCZ_jHQboPvokk")
+    @ApiImplicitParam(name = "Authorization", value = "Bearer token", required = true, paramType = "header", dataTypeClass = String.class, example = "Bearer_eyJhbGci1OiJIUzI1NiJ9.eyJzdWIiOiJNYWtzaW0iLCJyb2xlcyI6WyJBRE1JTl9ST0xFIl0sImlhdCI6MTYyMDIzODIxMywiZXhwIjoxNjIwMjM4MjczfQ.RNWOoxFA1NsdnvBka_obrKRODYjk-eCZ_jHQboPvokk")
     @DeleteMapping("{customerId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Customer> deleteCustomer(@NotNull @PathVariable UUID customerId) {
