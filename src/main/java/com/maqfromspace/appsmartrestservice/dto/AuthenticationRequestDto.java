@@ -12,11 +12,11 @@ import javax.validation.constraints.NotNull;
 @Data
 @ApiModel(value = "AuthenticationRequestDto", description = "User parameters")
 public class AuthenticationRequestDto {
-    @ApiModelProperty(notes = "username", example = "Maksim", required = true)
+    @ApiModelProperty(notes = "username", example = "admin", required = true)
     @NotNull(message = "Field 'username' can't be null")
     private String username;
     @NotNull(message = "Field 'password' can't be null")
-    @ApiModelProperty(notes = "password", example = "admin123", required = true)
+    @ApiModelProperty(notes = "password", example = "adminpassword", required = true)
     private String password;
 }
 

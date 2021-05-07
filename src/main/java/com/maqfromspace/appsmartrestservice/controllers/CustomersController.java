@@ -5,7 +5,7 @@ import com.maqfromspace.appsmartrestservice.dto.NewCustomerRequestDto;
 import com.maqfromspace.appsmartrestservice.entities.Customer;
 import com.maqfromspace.appsmartrestservice.services.customer.CustomerService;
 import com.maqfromspace.appsmartrestservice.utils.CustomerAssembler;
-import io.swagger.annotations.Api;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,6 +39,11 @@ public class CustomersController {
     }
 
     //Get list of all customers that have not been deleted
+    @ApiOperation(value = "Get customers",
+            notes = "Method allows get customers")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = ""),
+            })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public PagedModel<EntityModel<Customer>> getCustomers(Pageable pageable) {
@@ -47,6 +52,12 @@ public class CustomersController {
     }
 
     //Get customer by id
+    @ApiOperation(value = "Get customer by id",
+            notes = "Method allows get customer by id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = ""),
+            @ApiResponse(code = 404, message = "Could not found customer with id 5e0062b5-9e54-4bdf-9b61-ee695b3beb4d")
+    })
     @GetMapping("{customerId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Customer> getCustomer(@PathVariable UUID customerId) {
@@ -56,6 +67,12 @@ public class CustomersController {
     }
 
     //Create new customer
+    @ApiOperation(value = "Create customer",
+            notes = "Method allows create customer")
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Created"),
+            @ApiResponse(code = 400, message = "Field title can't be null"),
+    })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EntityModel<Customer> createCustomer(@Valid @RequestBody NewCustomerRequestDto newCustomerRequestDto) {
@@ -63,7 +80,16 @@ public class CustomersController {
         return customerAssembler.toModel(savedCustomer);
     }
 
+
     //Edit customer
+    @ApiOperation(value = "Edit customer (SECURED)",
+            notes = "Method allows edit customer")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = ""),
+            @ApiResponse(code = 403, message = "JWT token isn't valid or expired"),
+            @ApiResponse(code = 404, message = "Could not found customer with id 5e0062b5-9e54-4bdf-9b61-ee695b3beb4d")
+    })
+    @ApiImplicitParam(name = "Authorization", value = "Bearer Token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer_eyJhbGci1OiJIUzI1NiJ9.eyJzdWIiOiJNYWtzaW0iLCJyb2xlcyI6WyJBRE1JTl9ST0xFIl0sImlhdCI6MTYyMDIzODIxMywiZXhwIjoxNjIwMjM4MjczfQ.RNWOoxFA1NsdnvBka_obrKRODYjk-eCZ_jHQboPvokk")
     @PutMapping("{customerId}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<EntityModel<Customer>> editCustomer(@NotNull @PathVariable UUID customerId, @Valid @RequestBody EditCustomerRequestDto editCustomerRequestDto) {
@@ -73,6 +99,14 @@ public class CustomersController {
     }
 
     //Delete customer
+    @ApiOperation(value = "Delete customer (SECURED)",
+            notes = "Method allows delete customer")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = ""),
+            @ApiResponse(code = 403, message = "JWT token isn't valid or expired"),
+            @ApiResponse(code = 404, message = "Could not found customer with id 5e0062b5-9e54-4bdf-9b61-ee695b3beb4d")
+    })
+    @ApiImplicitParam(name = "Authorization", value = "Bearer token", required = true, allowEmptyValue = false, paramType = "header", dataTypeClass = String.class, example = "Bearer_eyJhbGci1OiJIUzI1NiJ9.eyJzdWIiOiJNYWtzaW0iLCJyb2xlcyI6WyJBRE1JTl9ST0xFIl0sImlhdCI6MTYyMDIzODIxMywiZXhwIjoxNjIwMjM4MjczfQ.RNWOoxFA1NsdnvBka_obrKRODYjk-eCZ_jHQboPvokk")
     @DeleteMapping("{customerId}")
     @ResponseStatus(HttpStatus.OK)
     public EntityModel<Customer> deleteCustomer(@NotNull @PathVariable UUID customerId) {
