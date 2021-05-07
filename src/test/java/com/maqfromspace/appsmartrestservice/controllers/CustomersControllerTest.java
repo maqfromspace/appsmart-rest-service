@@ -2,13 +2,16 @@ package com.maqfromspace.appsmartrestservice.controllers;
 
 import com.jayway.jsonpath.JsonPath;
 import com.maqfromspace.appsmartrestservice.repositories.CustomersRepository;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -23,17 +26,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
+@Sql({"/delete_user_role.sql","/insert_role.sql", "/insert_user.sql", "/insert_user_role.sql"})
 public class CustomersControllerTest {
 
     public static final String CUSTOMERS_URL = "http://localhost:8080/api/v1/customers";
+    public static final String LOGIN_URL = "http://localhost:8080/api/v1/auth/login";
     @Autowired
     MockMvc mockMvc;
     @Autowired
     CustomersRepository customersRepository;
 
 
-    private ResultActions getCustomer(String uuid, String title) throws Exception {
-        return mockMvc
+
+    private String getToken() throws Exception {
+        String username = "admin";
+        String password = "adminpassword";
+        String response = mockMvc
+                .perform(
+                        post(LOGIN_URL)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("{" +
+                                        "\"username\":\"" + username + "\"," +
+                                        "\"password\":\"" + password + "\"" +
+                                        "}")
+                ).andExpect(MockMvcResultMatchers.jsonPath("$.token").isNotEmpty()).andReturn().getResponse().getContentAsString();
+        JSONObject jsonObject = new JSONObject(response);
+        return "Bearer_" + jsonObject.get("token");
+    }
+    private void getCustomer(String uuid, String title) throws Exception {
+        mockMvc
                 .perform(
                         get(CUSTOMERS_URL + "/" + uuid)
                 )
@@ -44,15 +65,15 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
     }
-    private ResultActions getCustomers() throws Exception {
-        return mockMvc
+    private void getCustomers() throws Exception {
+        mockMvc
                 .perform(
                         get(CUSTOMERS_URL)
                 )
                 .andExpect(status().isOk());
     }
-    private ResultActions getCustomerAfterEdit(String uuid, String title) throws Exception {
-        return mockMvc
+    private void getCustomerAfterEdit(String uuid, String title) throws Exception {
+        mockMvc
                 .perform(
                         get(CUSTOMERS_URL + "/" + uuid)
                 )
@@ -64,8 +85,8 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
     }
 
-    private ResultActions getCustomerAfterEditWithEmptyBody(String uuid, String title) throws Exception {
-        return mockMvc
+    private void getCustomerAfterEditWithEmptyBody(String uuid, String title) throws Exception {
+        mockMvc
                 .perform(
                         get(CUSTOMERS_URL + "/" + uuid)
                 )
@@ -76,12 +97,13 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
     }
-    private ResultActions editCustomer(String uuid, String title) throws Exception {
-        return mockMvc
+    private void editCustomer(String uuid, String title) throws Exception {
+        mockMvc
                 .perform(
                         put(CUSTOMERS_URL + "/" + uuid)
+                                .header(HttpHeaders.AUTHORIZATION, getToken())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content("{\"title\":\"" + title +"\"}")
+                                .content("{\"title\":\"" + title + "\"}")
                 )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
@@ -91,11 +113,12 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
     }
 
-    private ResultActions editCustomerWithEmptyBody(String uuid) throws Exception {
-        return mockMvc
+    private void editCustomerWithEmptyBody(String uuid) throws Exception {
+        mockMvc
                 .perform(
                         put(CUSTOMERS_URL + "/" + uuid)
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, getToken())
                                 .content("{}")
                 )
                 .andExpect(status().isOk())
@@ -119,8 +142,8 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.modifiedAt").isEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
     }
-    private ResultActions addCustomerWithEmptyTitle() throws Exception {
-        return mockMvc
+    private void addCustomerWithEmptyTitle() throws Exception {
+        mockMvc
                 .perform(
                         post(CUSTOMERS_URL)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -130,11 +153,13 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.content().string("Field title can't be null"));
     }
 
-    private ResultActions deleteCustomer(UUID uuid, String title) throws Exception {
+    private void deleteCustomer(UUID uuid, String title) throws Exception {
         System.out.println(uuid);
-        return mockMvc
+        mockMvc
                 .perform(
                         delete(CUSTOMERS_URL + "/" + uuid)
+                                .header(HttpHeaders.AUTHORIZATION, getToken())
+
                 )
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNotEmpty())
@@ -144,11 +169,13 @@ public class CustomersControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$._links").isNotEmpty());
     }
 
-    private ResultActions deleteCustomerWithInvalidUuid(UUID uuid) throws Exception {
+    private void deleteCustomerWithInvalidUuid(UUID uuid) throws Exception {
         System.out.println(uuid);
-        return mockMvc
+        mockMvc
                 .perform(
                         delete(CUSTOMERS_URL + "/" + uuid)
+                                .header(HttpHeaders.AUTHORIZATION, getToken())
+
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().string("Could not found customer with id " + uuid));
