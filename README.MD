@@ -6,15 +6,11 @@
 
 [![codecov](https://codecov.io/gh/maqfromspace/appsmart-rest-service/branch/dev/graph/badge.svg?token=2SVL4OQM63)](https://codecov.io/gh/maqfromspace/appsmart-rest-service)
 
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=maqfromspace_appsmart-rest-service&metric=bugs)](https://sonarcloud.io/dashboard?id=maqfromspace_Professional-hello-world)
-
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=maqfromspace_appsmart-rest-service&metric=code_smells)](https://sonarcloud.io/dashboard?id=maqfromspace_Professional-hello-world)
-
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=maqfromspace_appsmart-rest-service&metric=coverage)](https://sonarcloud.io/dashboard?id=maqfromspace_Professional-hello-world)
-
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=maqfromspace_appsmart-rest-service&metric=ncloc)](https://sonarcloud.io/dashboard?id=maqfromspace_Professional-hello-world)
-
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=maqfromspace_appsmart-rest-service&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=maqfromspace_Professional-hello-world)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=maqfromspace_appsmart-rest-service&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=maqfromspace_appsmart-rest-service)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=maqfromspace_appsmart-rest-service&metric=coverage)](https://sonarcloud.io/dashboard?id=maqfromspace_appsmart-rest-service)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=maqfromspace_appsmart-rest-service&metric=bugs)](https://sonarcloud.io/dashboard?id=maqfromspace_appsmart-rest-service)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=maqfromspace_appsmart-rest-service&metric=code_smells)](https://sonarcloud.io/dashboard?id=maqfromspace_appsmart-rest-service)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=maqfromspace_appsmart-rest-service&metric=ncloc)](https://sonarcloud.io/dashboard?id=maqfromspace_appsmart-rest-service)
 
 ## Содержание:
 - [Краткое описание](#Introduction)
