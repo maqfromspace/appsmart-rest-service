@@ -153,4 +153,12 @@ c следующим телом запроса:
 https://github.com/maqfromspace/appsmart-rest-service/actions
 
 
+Проект имеет следующий цикл:
+1) Сборка
+2) Проверка на app.codecov.io (https://app.codecov.io/gh/maqfromspace/appsmart-rest-service)
+3) Проверка в sonarqube 
+   
+    (Ветка dev: https://sonarcloud.io/dashboard?branch=dev&id=maqfromspace_appsmart-rest-service)
+    (Ветка master: https://sonarcloud.io/dashboard?id=maqfromspace_appsmart-rest-service)
 
+4) После того, как все шаги будут успещно выполнены, сервис будет выкачен на heroku https://appsmart-rest-service.herokuapp.com
