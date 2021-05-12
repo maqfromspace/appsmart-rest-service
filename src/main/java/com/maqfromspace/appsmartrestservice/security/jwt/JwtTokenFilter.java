@@ -1,6 +1,7 @@
 package com.maqfromspace.appsmartrestservice.security.jwt;
 
 
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
@@ -15,13 +16,10 @@ import java.io.IOException;
  * JWT token filter that handles requests to application.
  */
 
+@AllArgsConstructor
 public class JwtTokenFilter extends GenericFilterBean {
 
     private  JwtTokenProvider jwtTokenProvider;
-
-    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain filterChain)

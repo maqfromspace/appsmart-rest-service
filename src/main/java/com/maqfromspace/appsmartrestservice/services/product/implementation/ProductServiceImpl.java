@@ -6,25 +6,20 @@ import com.maqfromspace.appsmartrestservice.exceptions.ProductNotFoundException;
 import com.maqfromspace.appsmartrestservice.repositories.CustomersRepository;
 import com.maqfromspace.appsmartrestservice.repositories.ProductRepository;
 import com.maqfromspace.appsmartrestservice.services.product.ProductService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@AllArgsConstructor
 @Slf4j
 @Service
 public class ProductServiceImpl implements ProductService {
     final ProductRepository productRepository;
     final CustomersRepository customersRepository;
-
-    public ProductServiceImpl(@Autowired ProductRepository productRepository,
-                              @Autowired CustomersRepository customersRepository) {
-        this.productRepository = productRepository;
-        this.customersRepository = customersRepository;
-    }
 
     @Override
     public Product getProduct(UUID productId) {

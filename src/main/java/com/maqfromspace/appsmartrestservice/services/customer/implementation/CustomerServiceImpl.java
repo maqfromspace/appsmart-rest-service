@@ -4,22 +4,19 @@ import com.maqfromspace.appsmartrestservice.entities.Customer;
 import com.maqfromspace.appsmartrestservice.exceptions.CustomerNotFoundException;
 import com.maqfromspace.appsmartrestservice.repositories.CustomersRepository;
 import com.maqfromspace.appsmartrestservice.services.customer.CustomerService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+@AllArgsConstructor
 @Slf4j
 @Service
 public class CustomerServiceImpl implements CustomerService {
     final CustomersRepository customersRepository;
-
-    public CustomerServiceImpl(@Autowired CustomersRepository customersRepository) {
-        this.customersRepository = customersRepository;
-    }
 
     @Override
     public Page<Customer> getCustomers(Pageable pageable) {

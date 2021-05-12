@@ -2,6 +2,7 @@ package com.maqfromspace.appsmartrestservice.security.jwt;
 
 import com.maqfromspace.appsmartrestservice.entities.User;
 import com.maqfromspace.appsmartrestservice.services.user.UserService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,16 +12,12 @@ import org.springframework.stereotype.Service;
 /**
  * Implementation of UserDetailsService
  */
+@AllArgsConstructor
 @Service
 @Slf4j
 public class JwtUserDetailsService implements UserDetailsService {
 
     private final UserService userService;
-
-
-    public JwtUserDetailsService(UserService userService) {
-        this.userService = userService;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

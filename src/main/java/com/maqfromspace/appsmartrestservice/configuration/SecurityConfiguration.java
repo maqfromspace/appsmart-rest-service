@@ -2,7 +2,7 @@ package com.maqfromspace.appsmartrestservice.configuration;
 
 import com.maqfromspace.appsmartrestservice.security.jwt.JwtConfigurer;
 import com.maqfromspace.appsmartrestservice.security.jwt.JwtTokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 /**
  * Security configuration
  */
+@AllArgsConstructor
 @Component
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -21,12 +22,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final String CUSTOMER_ENDPOINT = "/api/v1/customers/**";
     private static final String PRODUCT_ENDPOINT = "/api/v1/products/**";
-
-
-    @Autowired
-    public SecurityConfiguration(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
 
     @Bean
     @Override

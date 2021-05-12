@@ -6,7 +6,7 @@ import com.maqfromspace.appsmartrestservice.entities.Product;
 import com.maqfromspace.appsmartrestservice.services.product.ProductService;
 import com.maqfromspace.appsmartrestservice.utils.ProductAssembler;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -20,6 +20,7 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 //Product controller
+@AllArgsConstructor
 @RestController
 @RequestMapping("api/v1")
 @Api(tags = {"Products"})
@@ -28,15 +29,6 @@ public class ProductController {
     private final ProductService productService;
     private final ProductAssembler productAssembler;
     private final PagedResourcesAssembler<Product> productPagedResourcesAssembler;
-
-
-    public ProductController(@Autowired ProductService productService,
-                             @Autowired ProductAssembler productAssembler,
-                             @Autowired PagedResourcesAssembler<Product> productPagedResourcesAssembler) {
-        this.productService = productService;
-        this.productAssembler = productAssembler;
-        this.productPagedResourcesAssembler = productPagedResourcesAssembler;
-    }
 
     //Return product by id
     @ApiOperation(value = "Get product by id",

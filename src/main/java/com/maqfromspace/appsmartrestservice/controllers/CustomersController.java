@@ -6,7 +6,7 @@ import com.maqfromspace.appsmartrestservice.entities.Customer;
 import com.maqfromspace.appsmartrestservice.services.customer.CustomerService;
 import com.maqfromspace.appsmartrestservice.utils.CustomerAssembler;
 import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -21,6 +21,7 @@ import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 //Customers controller
+@AllArgsConstructor
 @RestController
 @RequestMapping("api/v1/customers")
 @Api(tags = {"Customers"})
@@ -29,14 +30,6 @@ public class CustomersController {
     private final CustomerAssembler customerAssembler;
     private final PagedResourcesAssembler<Customer> customerPagedResourcesAssembler;
     private final CustomerService customerService;
-
-    public CustomersController(@Autowired CustomerAssembler customerAssembler,
-                               @Autowired PagedResourcesAssembler<Customer> customerPagedResourcesAssembler,
-                               @Autowired CustomerService customerService) {
-        this.customerAssembler = customerAssembler;
-        this.customerPagedResourcesAssembler = customerPagedResourcesAssembler;
-        this.customerService = customerService;
-    }
 
     //Get list of all customers that have not been deleted
     @ApiOperation(value = "Get customers",

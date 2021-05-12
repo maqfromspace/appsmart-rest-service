@@ -9,7 +9,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,6 +25,7 @@ import javax.validation.Valid;
 /**
  * Authentication controller
  */
+@AllArgsConstructor
 @RestController
 @RequestMapping(value = "/api/v1/auth")
 @Api(tags = {"Authentication"})
@@ -35,13 +36,6 @@ public class AuthenticationController {
     private final JwtTokenProvider jwtTokenProvider;
 
     private final UserService userService;
-
-    @Autowired
-    public AuthenticationController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserService userService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.userService = userService;
-    }
 
     @PostMapping("login")
     @ApiOperation(value = "Get token by username and password",
