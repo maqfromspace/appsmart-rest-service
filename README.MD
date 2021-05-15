@@ -167,4 +167,6 @@ https://github.com/maqfromspace/appsmart-rest-service/actions
     (Ветка dev: https://sonarcloud.io/dashboard?branch=dev&id=maqfromspace_appsmart-rest-service)
     (Ветка master: https://sonarcloud.io/dashboard?id=maqfromspace_appsmart-rest-service)
 
-4) После того, как все шаги будут успещно выполнены, сервис будет выкачен на heroku https://appsmart-rest-service.herokuapp.com
+4) После того, как все шаги будут успешно выполнены, сервис будет выкачен на heroku https://appsmart-rest-service.herokuapp.com
+
+Доступность сервиса можно проверить по ссылке https://appsmart-rest-service.herokuapp.com/actuator/health
