@@ -1,7 +1,7 @@
 package com.maqfromspace.appsmartrestservice.controllers;
 
-import com.maqfromspace.appsmartrestservice.dto.EditCustomerRequestDto;
-import com.maqfromspace.appsmartrestservice.dto.NewCustomerRequestDto;
+import com.maqfromspace.appsmartrestservice.dto.customer.EditCustomerRequestDto;
+import com.maqfromspace.appsmartrestservice.dto.customer.NewCustomerRequestDto;
 import com.maqfromspace.appsmartrestservice.entities.Customer;
 import com.maqfromspace.appsmartrestservice.services.customer.CustomerService;
 import com.maqfromspace.appsmartrestservice.utils.CustomerAssembler;

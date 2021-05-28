@@ -1,7 +1,7 @@
 package com.maqfromspace.appsmartrestservice.controllers;
 
-import com.maqfromspace.appsmartrestservice.dto.AuthenticationRequestDto;
-import com.maqfromspace.appsmartrestservice.dto.AuthenticationResponseDto;
+import com.maqfromspace.appsmartrestservice.dto.authentication.AuthenticationRequestDto;
+import com.maqfromspace.appsmartrestservice.dto.authentication.AuthenticationResponseDto;
 import com.maqfromspace.appsmartrestservice.entities.User;
 import com.maqfromspace.appsmartrestservice.security.jwt.JwtTokenProvider;
 import com.maqfromspace.appsmartrestservice.services.user.UserService;

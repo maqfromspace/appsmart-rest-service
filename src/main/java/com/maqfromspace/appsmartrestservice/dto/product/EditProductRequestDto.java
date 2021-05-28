@@ -1,4 +1,4 @@
-package com.maqfromspace.appsmartrestservice.dto;
+package com.maqfromspace.appsmartrestservice.dto.product;
 
 import com.maqfromspace.appsmartrestservice.entities.Product;
 import io.swagger.annotations.ApiModel;

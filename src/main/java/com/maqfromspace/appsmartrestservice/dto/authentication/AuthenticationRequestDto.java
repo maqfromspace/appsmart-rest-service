@@ -1,4 +1,4 @@
-package com.maqfromspace.appsmartrestservice.dto;
+package com.maqfromspace.appsmartrestservice.dto.authentication;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

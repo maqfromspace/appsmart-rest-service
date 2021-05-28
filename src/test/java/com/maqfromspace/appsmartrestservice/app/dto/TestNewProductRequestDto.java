@@ -1,6 +1,6 @@
 package com.maqfromspace.appsmartrestservice.app.dto;
 
-import com.maqfromspace.appsmartrestservice.dto.NewProductRequestDto;
+import com.maqfromspace.appsmartrestservice.dto.product.NewProductRequestDto;
 import com.maqfromspace.appsmartrestservice.entities.Product;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
